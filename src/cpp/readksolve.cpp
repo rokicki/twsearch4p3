@@ -2,7 +2,7 @@
 #include "parsemoves.h"
 #include <iostream>
 int nocorners, nocenters, noedges, ignoreori, distinguishall;
-set<string> omitsets;
+set<string> omitsets, sortsymm;
 static int lineno;
 void inerror(const string s, const string x = "") {
   if (lineno)
@@ -335,6 +335,11 @@ puzdef readdef(istream *f) {
       sd.name = toks[1];
       sd.size = getnumber(1, toks[2]);
       sd.omod = getnumber(1, toks[3]);
+      if (sortsymm.find(sd.name) != sortsymm.end()) { 
+ cout << "Noticing sortsymm on " << sd.name << endl ;
+        sd.sortsymm = 1;
+        pz.sortsymm = 1;
+      }
       if (sd.omod > 127)
         inerror("! twsearch supports a maximum orientation size of 127");
       if (ignoreori)

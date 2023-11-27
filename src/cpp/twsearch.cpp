@@ -60,6 +60,7 @@ void reseteverything() {
   ignoreori = 0;
   distinguishall = 0;
   omitsets.clear();
+  sortsymm.clear();
   solutionsfound = 0;
   solutionsneeded = 1;
   noearlysolutions = 0;
@@ -201,6 +202,11 @@ puzdef makepuzdef(istream *f) {
   if (omitsets.size()) {
     pd.addoptionssum("omit");
     for (auto s : omitsets)
+      pd.addoptionssum(s.c_str());
+  }
+  if (sortsymm.size()) {
+    pd.addoptionssum("sortsymm");
+    for (auto s : sortsymm)
       pd.addoptionssum(s.c_str());
   }
   if (distinguishall)
@@ -383,6 +389,19 @@ static struct cmdlinescramblecmd : cmd {
   virtual void docommand(puzdef &pd) { solvecmdline(pd, scramblealgo, gs); }
   const char *scramblealgo = 0;
 } registercmdlinescramble;
+
+static struct sortsymmopt : specialopt {
+  sortsymmopt()
+      : specialopt(
+            "--sortsymm",
+            "setname  The values of this set serve only to distinguish, but the order\n"
+            "does not matter.  For instance, use when matching edges on the 4x4x4.") {}
+  virtual void parse_args(int *argc, const char ***argv) {
+    (*argc)--;
+    (*argv)++;
+    sortsymm.insert(**argv);
+  }
+} registersortsymmopt;
 
 static struct omitopt : specialopt {
   omitopt()

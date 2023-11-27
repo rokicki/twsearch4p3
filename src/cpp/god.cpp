@@ -551,7 +551,11 @@ static int doarraygodsymchunk(const puzdef *pd, loosetype *reader,
       pd->mul(p1, pd->moves[i].pos, p2);
       if (!pd->legalstate(p2))
         continue;
-      int sym = slowmodm2(*pd, p2, p3);
+      int sym = 0;
+      if (pd->sortsymm)
+        sym = modsortsymm(*pd, p2, p3);
+      else
+        sym = slowmodm2(*pd, p2, p3);
       loosepack(*pd, p3, writer, 0, 1 + (sym > 1));
       writer += looseper;
       r++;
@@ -767,6 +771,8 @@ void doarraygod2(const puzdef &pd) {
   showantipodesloose(pd);
 }
 ull calcsymseen(const puzdef &pd, loosetype *p, ull cnt, vector<int> *rotmul) {
+  if (pd.rotgroup.size() <= 0)
+    return 1;
   int symoff = basebits / (sizeof(loosetype) * 8);
   loosetype symbit = (1LL << (basebits & ((sizeof(loosetype) * 8) - 1)));
   int rots = pd.rotgroup.size();
@@ -816,6 +822,8 @@ static void *docswork(void *o) {
  */
 ull calcsymseen(const puzdef &pd, loosetype *p, ull cnt) {
   int rots = pd.rotgroup.size();
+  if (rots <= 1)
+    return cnt;
   vector<int> rotmul(rots + 1);
   for (int i = 1; i * i <= rots; i++)
     if (rots % i == 0) {
@@ -855,7 +863,11 @@ void doarraygodsymm(const puzdef &pd) {
     error("! not enough memory");
   stacksetval p1(pd), p2(pd), p3(pd);
   pd.assignpos(p2, pd.solved);
-  int sym = slowmodm2(pd, p2, p1);
+  int sym = 0;
+  if (pd.sortsymm)
+    sym = modsortsymm(pd, p2, p1);
+  else
+    sym = slowmodm2(pd, p2, p1);
   loosepack(pd, p1, mem, 0, 1 + (sym > 1));
   cnts.clear();
   cnts.push_back(1);
@@ -900,7 +912,11 @@ void doarraygodsymm(const puzdef &pd) {
           pd.mul(p1, pd.moves[i].pos, p2);
           if (!pd.legalstate(p2))
             continue;
-          sym = slowmodm2(pd, p2, p3);
+          int sym = 0;
+          if (pd.sortsymm)
+            sym = modsortsymm(pd, p2, p3);
+          else
+            sym = slowmodm2(pd, p2, p3);
           loosepack(pd, p3, writer, 0, 1 + (sym > 1));
           writer += looseper;
           if (writer + looseper >= lim)
@@ -957,7 +973,7 @@ static struct godcmd : cmd {
       cout << "Using twobit arrays." << endl;
       dotwobitgod2(pd);
     } else if (statesfitsa) {
-      if (pd.rotgroup.size()) {
+      if (pd.rotgroup.size() > 1 || pd.sortsymm) {
         cout << "Using sorting bfs symm and arrays." << endl;
         doarraygodsymm(pd);
       } else {
