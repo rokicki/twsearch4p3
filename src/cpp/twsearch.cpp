@@ -61,6 +61,7 @@ void reseteverything() {
   distinguishall = 0;
   omitsets.clear();
   sortsymm.clear();
+  sortsymmspec.clear();
   solutionsfound = 0;
   solutionsneeded = 1;
   noearlysolutions = 0;
@@ -207,6 +208,11 @@ puzdef makepuzdef(istream *f) {
   if (sortsymm.size()) {
     pd.addoptionssum("sortsymm");
     for (auto s : sortsymm)
+      pd.addoptionssum(s.c_str());
+  }
+  if (sortsymmspec.size()) {
+    pd.addoptionssum("sortsymmspec");
+    for (auto s : sortsymmspec)
       pd.addoptionssum(s.c_str());
   }
   if (distinguishall)
@@ -392,16 +398,32 @@ static struct cmdlinescramblecmd : cmd {
 
 static struct sortsymmopt : specialopt {
   sortsymmopt()
-      : specialopt(
-            "--sortsymm",
-            "setname  The values of this set serve only to distinguish, but the order\n"
-            "does not matter.  For instance, use when matching edges on the 4x4x4.") {}
+      : specialopt("--sortsymm", "setname  The values of this set serve only "
+                                 "to distinguish, but the order\n"
+                                 "does not matter.  For instance, use when "
+                                 "matching edges on the 4x4x4.") {}
   virtual void parse_args(int *argc, const char ***argv) {
     (*argc)--;
     (*argv)++;
     sortsymm.insert(**argv);
   }
 } registersortsymmopt;
+
+static struct sortsymmspecopt : specialopt {
+  sortsymmspecopt()
+      : specialopt("--sortsymmspec",
+                   "setname  A special sortsymm for phase 3 of 4x4x4 on "
+                   "centers.  We permit\n"
+                   "L to swap with R, and U to swap with D, and F to swap with "
+                   "B, as long as\n"
+                   "the total parity is even (thus a total of 8 possible "
+                   "orientations.") {}
+  virtual void parse_args(int *argc, const char ***argv) {
+    (*argc)--;
+    (*argv)++;
+    sortsymmspec.insert(**argv);
+  }
+} registersortsymmspecopt;
 
 static struct omitopt : specialopt {
   omitopt()

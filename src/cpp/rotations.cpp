@@ -328,24 +328,53 @@ int slowmodm2(const puzdef &pd, const setval p1, setval p2) {
 }
 // for sortsymm
 int modsortsymm(const puzdef &pd, const setval p1, setval p2) {
-   pd.assignpos(p2, p1) ;
-   int remap[256];
-   for (int i = 0; i < (int)pd.setdefs.size(); i++) {
-     const setdef &sd = pd.setdefs[i];
-     if (sd.sortsymm == 0)
-       continue;
-     if (sd.omod != 1)
-       error("! can't use sort symmetry and orientation at the same time");
-     unsigned char *p = p2.dat + sd.off ;
-     int n = sd.size ;
-     for (int i=0; i<n; i++)
-        remap[i] = -1 ;
-     int at = 0 ;
-     for (i=0; i<n; i++) {
+  pd.assignpos(p2, p1);
+  int remap[256];
+  for (int i = 0; i < (int)pd.setdefs.size(); i++) {
+    const setdef &sd = pd.setdefs[i];
+    if (sd.sortsymm == 0)
+      continue;
+    if (sd.omod != 1)
+      error("! can't use sort symmetry and orientation at the same time");
+    unsigned char *p = p2.dat + sd.off;
+    int n = sd.size;
+    for (int i = 0; i < n; i++)
+      remap[i] = -1;
+    if (sd.sortsymm == 1) {
+      int at = 0;
+      for (i = 0; i < n; i++) {
         if (remap[p[i]] < 0)
-           remap[p[i]] = at++ ;
-        p[i] = remap[p[i]] ;
-     }
-   }
-   return 1;
+          remap[p[i]] = at++;
+        p[i] = remap[p[i]];
+      }
+    } else {
+      // FRDBLU
+      int seen = 0;
+      int totswap = 0;
+      for (i = 0; i < n; i++) {
+        if (remap[p[i]] < 0) {
+          remap[p[i]] = p[i] % 3;
+          remap[(p[i] + 3) % 6] = (p[i] % 3) + 3;
+          seen += 2;
+          if (remap[p[i]] != p[i])
+            totswap++;
+          if (seen == 4) { // enforce parity
+            for (int j = 0; j < 3; j++) {
+              if (remap[j] < 0) {
+                if (totswap & 1) {
+                  remap[j] = j + 3;
+                  remap[j + 3] = j;
+                } else {
+                  remap[j] = j;
+                  remap[j + 3] = j + 3;
+                }
+              }
+            }
+          }
+        }
+        p[i] = remap[p[i]];
+      }
+    }
+  }
+  return 1;
 }

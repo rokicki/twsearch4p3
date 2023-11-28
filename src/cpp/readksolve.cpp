@@ -2,7 +2,7 @@
 #include "parsemoves.h"
 #include <iostream>
 int nocorners, nocenters, noedges, ignoreori, distinguishall;
-set<string> omitsets, sortsymm;
+set<string> omitsets, sortsymm, sortsymmspec;
 static int lineno;
 void inerror(const string s, const string x = "") {
   if (lineno)
@@ -335,9 +335,11 @@ puzdef readdef(istream *f) {
       sd.name = toks[1];
       sd.size = getnumber(1, toks[2]);
       sd.omod = getnumber(1, toks[3]);
-      if (sortsymm.find(sd.name) != sortsymm.end()) { 
- cout << "Noticing sortsymm on " << sd.name << endl ;
+      if (sortsymm.find(sd.name) != sortsymm.end()) {
         sd.sortsymm = 1;
+        pz.sortsymm = 1;
+      } else if (sortsymmspec.find(sd.name) != sortsymmspec.end()) {
+        sd.sortsymm = 2;
         pz.sortsymm = 1;
       }
       if (sd.omod > 127)

@@ -62,12 +62,12 @@ int microthread::possibsolution(const puzdef &pd) {
   if (callback) {
     return callback(posns[sp], movehist, d, tid);
   }
-  int good = 0 ;
+  int good = 0;
   if (pd.sortsymm) {
-    modsortsymm(pd, posns[sp], *looktmp) ;
-    good = (pd.comparepos(*looktmp, pd.solved) == 0) ;
+    modsortsymm(pd, posns[sp], *looktmp);
+    good = (pd.comparepos(*looktmp, pd.solved) == 0);
   } else {
-    good = (pd.comparepos(posns[sp], pd.solved) == 0) ;
+    good = (pd.comparepos(posns[sp], pd.solved) == 0);
   }
   if (good) {
     int r = 1;
@@ -88,7 +88,7 @@ int microthread::possibsolution(const puzdef &pd) {
     release_global_lock();
     return r;
   } else {
-    cout << "Thought we had one but no??" << endl ;
+    cout << "Thought we had one but no??" << endl;
     return 0;
   }
 }

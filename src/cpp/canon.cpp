@@ -1,7 +1,7 @@
 #include "canon.h"
 #include "index.h"
-#include "util.h"
 #include "rotations.h"
+#include "util.h"
 #include <algorithm>
 #include <iostream>
 #include <map>
@@ -169,10 +169,10 @@ int ccnbase = 0;
 int recurcanonstates2(const puzdef &pd, int togo, ull moveset, int sp) {
   if (togo == 0) {
     if (pd.sortsymm) {
-       modsortsymm(pd, posns[sp], posns[sp+1]) ;
-       loosepack(pd, posns[sp+1], ccenc.data(), 1);
+      modsortsymm(pd, posns[sp], posns[sp + 1]);
+      loosepack(pd, posns[sp + 1], ccenc.data(), 1);
     } else {
-       loosepack(pd, posns[sp], ccenc.data(), 1);
+      loosepack(pd, posns[sp], ccenc.data(), 1);
     }
     if (ccseen.find(ccenc) == ccseen.end()) {
       ccseen.insert(ccenc);
