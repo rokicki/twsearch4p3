@@ -116,7 +116,10 @@ struct prunetable {
     return indexhash(fasthash(n, sv));
   }
   ull gethashforlookup(const setval sv, setval *looktmp) const {
-    if ((int)pdp->rotgroup.size() > 1) {
+    if (pdp->sortsymm) {
+      modsortsymm(*pdp, sv, *looktmp);
+      return indexhash(totsize, *looktmp);
+    } else if ((int)pdp->rotgroup.size() > 1) {
       slowmodm2(*pdp, sv, *looktmp);
       return indexhash(totsize, *looktmp);
     } else {

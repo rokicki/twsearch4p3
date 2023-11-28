@@ -30,7 +30,7 @@ vector<ull> makeworkchunks(const puzdef &pd, int d, setval symmreduce,
     while (chunkmoves + 3 < d && (int)workchunks.size() < 40 * mythreads) {
       vector<ull> wc2;
       vector<int> ws2;
-      if (pd.rotgroup.size() > 1) {
+      if (pd.sortsymm || pd.rotgroup.size() > 1) {
         for (int i = 0; i < (int)workchunks.size(); i++) {
           ull pmv = workchunks[i];
           int st = workstates[i];
@@ -49,7 +49,10 @@ vector<ull> makeworkchunks(const puzdef &pd, int d, setval symmreduce,
             pd.mul(p1, pd.moves[mv].pos, p2);
             if (!pd.legalstate(p2))
               continue;
-            slowmodm2(pd, p2, p3);
+            if (pd.sortsymm)
+               modsortsymm(pd, p2, p3) ;
+            else
+               slowmodm2(pd, p2, p3);
             int h = fasthash(pd.totsize, p3) % hashmod;
             int isnew = 1;
             for (int i = hashfront[h]; i >= 0; i = hashprev[i])

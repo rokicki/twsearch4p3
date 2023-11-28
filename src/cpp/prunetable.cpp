@@ -126,7 +126,10 @@ ull fillworker::filltable(const puzdef &pd, prunetable &pt, int togo, int sp,
   ull r = 0;
   if (togo == 0) {
     ull h;
-    if ((int)pd.rotgroup.size() > 1) {
+    if (pd.sortsymm) {
+      modsortsymm(pd, posns[sp], *looktmp);
+      h = pt.indexhash(pd.totsize, *looktmp);
+    } else if ((int)pd.rotgroup.size() > 1) {
       slowmodm2(pd, posns[sp], *looktmp);
       h = pt.indexhash(pd.totsize, *looktmp);
     } else {

@@ -62,7 +62,14 @@ int microthread::possibsolution(const puzdef &pd) {
   if (callback) {
     return callback(posns[sp], movehist, d, tid);
   }
-  if (pd.comparepos(posns[sp], pd.solved) == 0) {
+  int good = 0 ;
+  if (pd.sortsymm) {
+    modsortsymm(pd, posns[sp], *looktmp) ;
+    good = (pd.comparepos(*looktmp, pd.solved) == 0) ;
+  } else {
+    good = (pd.comparepos(posns[sp], pd.solved) == 0) ;
+  }
+  if (good) {
     int r = 1;
     get_global_lock();
     solutionsfound++;
@@ -80,8 +87,10 @@ int microthread::possibsolution(const puzdef &pd) {
       r = 0;
     release_global_lock();
     return r;
-  } else
+  } else {
+    cout << "Thought we had one but no??" << endl ;
     return 0;
+  }
 }
 int microthread::getwork(const puzdef &pd, prunetable &pt) {
   while (1) {
