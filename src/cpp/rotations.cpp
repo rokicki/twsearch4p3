@@ -342,7 +342,7 @@ int modsortsymm(const puzdef &pd, const setval p1, setval p2) {
       remap[i] = -1;
     if (sd.sortsymm == 1) {
       int at = 0;
-      for (i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
         if (remap[p[i]] < 0)
           remap[p[i]] = at++;
         p[i] = remap[p[i]];
@@ -351,7 +351,7 @@ int modsortsymm(const puzdef &pd, const setval p1, setval p2) {
       // FRDBLU
       int seen = 0;
       int totswap = 0;
-      for (i = 0; i < n; i++) {
+      for (int i = 0; i < n; i++) {
         if (remap[p[i]] < 0) {
           remap[p[i]] = p[i] % 3;
           remap[(p[i] + 3) % 6] = (p[i] % 3) + 3;

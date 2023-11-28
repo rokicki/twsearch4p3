@@ -32,7 +32,8 @@ struct setdef {
   string name;
   uchar omod;
   int pbits, obits, pibits, psum;
-  bool dense, uniq, pparity, oparity, wildo, sortsymm;
+  bool dense, uniq, pparity, oparity, wildo;
+  int sortsymm;
   double logstates;
   unsigned long long llperms, llords, llstates;
   vector<int> cnts; // only not empty when not unique.
