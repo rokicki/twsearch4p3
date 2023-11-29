@@ -62,7 +62,7 @@ Set CENTERS 24 1
 #   changes only edge parity.  In the allowed set of moves for phase 3,
 #   this set will only take on values of 0 and 2.
 #
-SET P333 1 4
+Set P333 1 4
 
 Solved
 EDGES
